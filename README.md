@@ -16,7 +16,27 @@ This respository and it's companion [Resume](https://github.com/JefeDavis/Resume
 	- MakeFile
 	- Hugo Web Framework
 	- HTML5, SCSS
-	- Writing Great Documentation
+	- Writing Great Documentations
+
+# What Houye did to optimize this project
+* Specific Work Content:
+I reviewed and optimized resource management configurations in Kubernetes clusters, completing the following tasks:
+- Implemented detailed resource quota management (ResourceQuota) to ensure proper cluster resource allocation
+- Configured container-level resource limits (LimitRange) to prevent single container resource overconsumption
+- Implemented horizontal pod autoscaling (HPA) to automatically adjust pod count based on CPU utilization
+- Set precise resource requests and limits for both Web and PDF conversion services"
+
+* Technical Points:
+- Used ResourceQuota to control namespace-level resource usage
+- Implemented LimitRange for default container resource limits
+- Configured HorizontalPodAutoscaler for automatic scaling
+- Set differentiated resource limits for different services
+
+* Achievements:
+- Improved cluster resource utilization
+- Enhanced system stability and reliability
+- Achieved automatic service scaling, improving system elasticity
+- Optimized resource allocation strategy, preventing resource contention
 
 # Why
 I hate updating resumes, It's not so much writing the content that I dislike. Instead, it's messing with Word and other tools to adjust margins, dealing with columns, page breaks and just formatting in general. So, why not use a data structure language like `YAML` and let programming deal with all of the formating. Plus, the portability and rapid deployments are a big upshot as well.
