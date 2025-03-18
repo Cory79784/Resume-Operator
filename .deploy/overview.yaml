@@ -89,8 +89,22 @@ spec:
       registry: ""
       name: "jefedavis/resume"
       tag: "v0.1.0"
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
   pdf:
     image:
       registry: ""
       name: jefedavis/resume-pdf-converter
       tag: "v0.1.0"
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "300m"
+        memory: "256Mi"
