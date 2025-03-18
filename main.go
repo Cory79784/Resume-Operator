@@ -56,24 +56,29 @@ func init() {
 
 func main() {
 	var metricsAddr string
-
 	var enableLeaderElection bool
-
 	var probeAddr string
+	var logLevel string
 
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
+	flag.StringVar(&logLevel, "log-level", "info", "Log level (debug, info, warn, error)")
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
 
 	opts := zap.Options{
 		Development: true,
+		Level:       zap.ParseLevel(logLevel),
 	}
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+	logger := zap.New(zap.UseFlagOptions(&opts))
+	ctrl.SetLogger(logger)
+
+	setupLog = logger.WithName("setup")
+	setupLog.Info("initializing resume operator", "version", "v0.1.0")
 
 	// only print a given warning the first time we receive it
 	rest.SetDefaultWarningHandler(
@@ -91,7 +96,10 @@ func main() {
 		LeaderElectionID:       "0edb8fc4.jefedavis.dev",
 	})
 	if err != nil {
-		setupLog.Error(err, "unable to start manager")
+		setupLog.Error(err, "failed to create manager", 
+			"metrics-addr", metricsAddr,
+			"probe-addr", probeAddr,
+			"leader-election", enableLeaderElection)
 		os.Exit(1)
 	}
 
@@ -103,10 +111,14 @@ func main() {
 	}
 
 	for _, reconciler := range reconcilers {
+		setupLog.Info("setting up controller", "name", reconciler.GetName())
 		if err = reconciler.SetupWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", reconciler.GetName())
+			setupLog.Error(err, "failed to create controller", 
+				"controller", reconciler.GetName(),
+				"error", err.Error())
 			os.Exit(1)
 		}
+		setupLog.Info("successfully set up controller", "name", reconciler.GetName())
 	}
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
