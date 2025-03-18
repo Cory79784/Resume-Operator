@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resume
+  labels:
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: webfront
+    app.kubernetes.io/part-of: resume
+    app.kubernetes.io/instance: resume-johndoe
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hugo
+      app.kubernetes.io/component: webfront
+      app.kubernetes.io/part-of: resume
+      app.kubernetes.io/instance: resume-johndoe
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hugo
+        app.kubernetes.io/component: webfront
+        app.kubernetes.io/part-of: resume
+        app.kubernetes.io/instance: resume-johndoe
+    spec:
+      containers:
+        - name: resume
+          image: ghcr.io/jefedavis/resume:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - server
+            - --baseURL=https://example.com
+            - --appendPort=false
+          volumeMounts:
+            - mountPath: /site/data
+              name: profile-mount
+            - mountPath: /site/data/experience/
+              name: experience-mount
+            - mountPath: /site/data/certs
+              name: certs-mount
+            - mountPath: /site/config.toml
+              subPath: config.toml
+              name: config
+      volumes:
+        - name: profile-mount
+          configMap:
+            name: resume-profile
+        - name: experience-mount
+          configMap:
+            name: resume-experience
+        - name: certs-mount
+          configMap:
+            name: resume-cert
+        - name: config
+          configMap:
+            name: resume-config
+
+            

@@ -1,0 +1,42 @@
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: Profile
+metadata:
+  name: profile-sample
+  namespace: default
+spec:
+  profile:
+    firstName: "John"
+    lastName: "Doe"
+    phoneNumber: ""
+    email: ""
+    linkedinURL: ""
+    githubURL: ""
+    location: "South Carolina"
+    overview: ""
+    coreCompetencies:
+      - Reading
+      - Writing
+    projects:
+      - https://github.com/JefeDavis/resume-operator
+    skills: 
+      - family: Developer Tools
+        items:
+          - Git
+          - Kubernetes
+  web:
+    image:
+      tag: "latest"
+      registry: ""
+      name: "jefedavis/resume"
+      pullPolicy: "IfNotPresent"
+  baseURL: "example.com"
+  pageTitle: "John Doe - CV"
+  pageCount: "1"
+  pdf:
+    image:
+      registry: ""
+      name: "jefedavis/resume"
+      tag: "latest"
+      pullPolicy: "IfNotPresent"
+  certIssuer: "letsencrypt-staging"
+  ingressClass: "nginx"

@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resume
+  labels:
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: webfront
+    app.kubernetes.io/part-of: resume
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    app.kubernetes.io/instance: resume-johndoe
+    app.kubernetes.io/managed-by: resume-operator
+    app.kubernetes.io/created-by: resume-controller-manager
+    #+operator-builder:collection:field:name="web.image.tag",type=string,default="latest"
+    app.kubernetes.io/version: latest
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hugo
+      app.kubernetes.io/component: webfront
+      app.kubernetes.io/part-of: resume
+      #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+      #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+      app.kubernetes.io/instance: resume-johndoe
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hugo
+        app.kubernetes.io/component: webfront
+        app.kubernetes.io/part-of: resume
+        #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+        #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+        app.kubernetes.io/instance: resume-johndoe
+        app.kubernetes.io/managed-by: resume-operator
+        app.kubernetes.io/created-by: resume-controller-manager
+        #+operator-builder:collection:field:name="web.image.tag",type=string,default="latest"
+        app.kubernetes.io/version: latest
+    spec:
+      containers:
+        - name: resume
+          #+operator-builder:field:name="web.image.registry",type=string,default="",replace="ghcr.io/"
+          #+operator-builder:field:name="web.image.name",type=string,default="jefedavis/resume",replace="jefedavis/resume"
+          #+operator-builder:field:name="web.image.tag",type=string,default="latest",replace="latest"
+          image: ghcr.io/jefedavis/resume:latest
+          #+operator-builder:field:name="web.image.pullPolicy",type=string,default="IfNotPresent"
+          imagePullPolicy: IfNotPresent
+          args:
+            - server
+            - --baseURL=https://example.com #+operator-builder:field:name=baseURL,type=string,default="example.com"
+            - --appendPort=false
+          volumeMounts:
+            - mountPath: /site/data
+              name: profile-mount
+            - mountPath: /site/data/experience/
+              name: experience-mount
+            - mountPath: /site/data/certs
+              name: certs-mount
+            - mountPath: /site/config.toml
+              subPath: config.toml
+              name: config
+      volumes:
+        - name: profile-mount
+          configMap:
+            name: resume-profile
+        - name: experience-mount
+          configMap:
+            name: resume-experience
+        - name: certs-mount
+          configMap:
+            name: resume-cert
+        - name: config
+          configMap:
+            name: resume-config

@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resume-experience
+  labels:
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: data
+    app.kubernetes.io/part-of: resume
+    app.kubernetes.io/instance: resume-johndoe
+data:
+  vmware.yaml: |-
+    ---
+    employer: Employer
+    location: Location
+    startDate: 2006-01-02
+    endDate: Present
+    positions:
+      - title: Title
+        startDate: 2006-01-03
+        endDate: 2006-01-04
+        highlights: Highlights
