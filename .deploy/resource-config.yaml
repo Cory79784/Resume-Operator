@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: resume-resource-quota
+  namespace: resume-system
+spec:
+  hard:
+    requests.cpu: "2"
+    requests.memory: 2Gi
+    limits.cpu: "4"
+    limits.memory: 4Gi
+    pods: "10"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: resume-limit-range
+  namespace: resume-system
+spec:
+  limits:
+  - default:
+      cpu: "500m"
+      memory: 512Mi
+    defaultRequest:
+      cpu: "200m"
+      memory: 256Mi
+    type: Container
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: resume-hpa
+  namespace: resume-system
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: resume-web
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70 
